@@ -7,6 +7,8 @@ import { InferGetServerSidePropsType } from "next";
 import fetchBooks from "@/lib/fetch-books";
 import fetchRandomBooks from "@/lib/fetch-random-books";
 
+//빌드 타임에 사전 렌더링을 할때 데이터를 불러오게 하고 싶다면
+// getStaticProps 사용(SSG)
 export const getServerSideProps = async () => {
   // 컴포넌트보다 먼저 실행되어서, 컴포넌트에 필요한 데이터 불러오는 함수
 

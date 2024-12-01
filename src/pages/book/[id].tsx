@@ -1,4 +1,10 @@
-import { GetServerSidePropsContext, InferGetServerSidePropsType } from "next";
+import {
+  GetServerSidePropsContext,
+  GetStaticPathsContext,
+  GetStaticPropsContext,
+  InferGetServerSidePropsType,
+  InferGetStaticPropsType,
+} from "next";
 import style from "./[id].module.css";
 import fetchOneBook from "@/lib/fetch-one-book";
 
@@ -14,9 +20,29 @@ const mockData = {
     "https://shopping-phinf.pstatic.net/main_3888828/38888282618.20230913071643.jpg",
 };
 
-export const getServerSideProps = async (
-  context: GetServerSidePropsContext
-) => {
+// export const getServerSideProps = async (
+//   context: GetServerSidePropsContext
+// ) => {
+//   const id = context.params!.id; // id가 무조건적으로 있어야 접근가능하므로 undefined이 아닐것이다 !설정
+//   const book = await fetchOneBook(Number(id));
+
+//   return {
+//     props: { book },
+//   };
+// };
+
+export const getStaticPaths = () => {
+  return {
+    paths: [
+      { params: { id: "1" } }, //파라미터의 값은 반드시 문자열!!(프레임워크의 문법)
+      { params: { id: "2" } },
+      { params: { id: "3" } },
+    ],
+    fallback: false, // paths 외의 값에 대한 대비책
+  };
+};
+
+export const getStaticProps = async (context: GetStaticPropsContext) => {
   const id = context.params!.id; // id가 무조건적으로 있어야 접근가능하므로 undefined이 아닐것이다 !설정
   const book = await fetchOneBook(Number(id));
 
@@ -27,7 +53,7 @@ export const getServerSideProps = async (
 
 export default function Page({
   book,
-}: InferGetServerSidePropsType<typeof getServerSideProps>) {
+}: InferGetStaticPropsType<typeof getStaticProps>) {
   if (!book) return "문제가 발생했습니다 다시 시도하세요";
 
   const { id, title, subTitle, description, author, publisher, coverImgUrl } =
