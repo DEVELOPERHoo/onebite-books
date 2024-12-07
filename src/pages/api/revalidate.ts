@@ -9,5 +9,6 @@ export default async function handler(
     return res.json({ revalidate: true });
   } catch (err) {
     res.status(500).send("Revalidation Failed");
+    console.error(err);
   }
 }
