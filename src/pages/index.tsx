@@ -3,19 +3,33 @@ import { ReactNode } from "react";
 import style from "./index.module.css";
 import books from "@/mock/books.json"; //@는 src 폴더를 지칭한다.
 import BookItem from "@/components/book-item";
-import { InferGetServerSidePropsType } from "next";
+import { InferGetServerSidePropsType, InferGetStaticPropsType } from "next";
 import fetchBooks from "@/lib/fetch-books";
 import fetchRandomBooks from "@/lib/fetch-random-books";
 
+// export const getServerSideProps = async () => {
+//   // 컴포넌트보다 먼저 실행되어서, 컴포넌트에 필요한 데이터 불러오는 함수
+
+//   //const allBooks = await fetchBooks();
+//   //const recoBooks = await fetchRandomBooks();
+
+//   // 요청이 직렬적인 부분에 대한 해결
+//   const [allBooks, recoBooks] = await Promise.all([
+//     fetchBooks(),
+//     fetchRandomBooks(),
+//   ]);
+
+//   return {
+//     props: {
+//       allBooks,
+//       recoBooks,
+//     },
+//   };
+// };
+
 //빌드 타임에 사전 렌더링을 할때 데이터를 불러오게 하고 싶다면
 // getStaticProps 사용(SSG)
-export const getServerSideProps = async () => {
-  // 컴포넌트보다 먼저 실행되어서, 컴포넌트에 필요한 데이터 불러오는 함수
-
-  //const allBooks = await fetchBooks();
-  //const recoBooks = await fetchRandomBooks();
-
-  // 요청이 직렬적인 부분에 대한 해결
+export const getStaticProps = async () => {
   const [allBooks, recoBooks] = await Promise.all([
     fetchBooks(),
     fetchRandomBooks(),
@@ -26,14 +40,14 @@ export const getServerSideProps = async () => {
       allBooks,
       recoBooks,
     },
+    revalidate: 3, // 페이지를 3초 주기로 재검증하겠다(ISR방식)
   };
 };
 
 export default function Home({
   allBooks,
   recoBooks,
-}: InferGetServerSidePropsType<typeof getServerSideProps>) {
-  console.log(allBooks);
+}: InferGetStaticPropsType<typeof getStaticProps>) {
   return (
     <div className={style.container}>
       <section>
